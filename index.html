@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swarm-Based Wind Turbine System | Adaptive High-Altitude Energy Capture</title>
+    <meta name="description"
+        content="Interactive simulation showcasing a 6-turbine honeycomb swarm system that adapts tilt angles to capture updrafts in urban high-altitude environments, compared to traditional fixed turbines.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1>Swarm-Based Wind Turbine System</h1>
+                </div>
+                <p class="tagline">6-Turbine Honeycomb Array for Urban High-Altitude Energy</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Control Panel -->
+            <section class="control-panel">
+                <h2>Simulation Controls</h2>
+
+                <div class="control-grid">
+                    <div class="control-group">
+                        <label for="wind-pattern">Wind Pattern</label>
+                        <select id="wind-pattern" class="control-input">
+                            <option value="urban">Urban (Updrafts & Turbulence)</option>
+                            <option value="variable">Variable (Standard)</option>
+                            <option value="steady">Steady</option>
+                            <option value="gusty">Gusty</option>
+                            <option value="rotating">Rotating</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="learning-rate">Learning Rate</label>
+                        <input type="range" id="learning-rate" class="control-slider" min="0.1" max="1.0" step="0.1"
+                            value="0.5">
+                        <span class="slider-value" id="learning-rate-value">0.5</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="wind-speed">Base Wind Speed (m/s)</label>
+                        <input type="range" id="wind-speed" class="control-slider" min="5" max="25" step="1" value="15">
+                        <span class="slider-value" id="wind-speed-value">15</span>
+                    </div>
+
+                    <div class="control-actions">
+                        <button id="start-btn" class="btn btn-primary">
+                            <span class="btn-icon">▶</span>
+                            Start Simulation
+                        </button>
+                        <button id="reset-btn" class="btn btn-secondary">
+                            <span class="btn-icon">↺</span>
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Visualization Area -->
+            <section class="visualization-section">
+                <div class="turbine-comparison">
+                    <!-- Adaptive Turbine -->
+                    <div class="turbine-container adaptive">
+                        <div class="turbine-header">
+                            <h3>🎯 Swarm Turbines (6x)</h3>
+                            <span class="status-badge learning">Adaptive</span>
+                        </div>
+                        <div class="turbine-display" id="adaptive-turbine">
+                            <canvas id="adaptive-canvas" width="400" height="400"></canvas>
+                            <div class="wind-indicator" id="wind-indicator-adaptive"></div>
+                        </div>
+                        <div class="turbine-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Angle</span>
+                                <span class="stat-value" id="adaptive-angle">0°</span>
+                            </div>
+                            <div class="stat-item highlight">
+                                <span class="stat-label">Energy Output</span>
+                                <span class="stat-value" id="adaptive-energy">0 kW</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Efficiency</span>
+                                <span class="stat-value" id="adaptive-efficiency">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Baseline Turbine -->
+                    <div class="turbine-container baseline">
+                        <div class="turbine-header">
+                            <h3>📍 Fixed Baseline</h3>
+                            <span class="status-badge fixed">Static</span>
+                        </div>
+                        <div class="turbine-display" id="baseline-turbine">
+                            <canvas id="baseline-canvas" width="400" height="400"></canvas>
+                            <div class="wind-indicator" id="wind-indicator-baseline"></div>
+                        </div>
+                        <div class="turbine-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Angle</span>
+                                <span class="stat-value" id="baseline-angle">0°</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Energy Output</span>
+                                <span class="stat-value" id="baseline-energy">0 kW</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Efficiency</span>
+                                <span class="stat-value" id="baseline-efficiency">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance Metrics -->
+            <section class="metrics-section">
+                <h2>Performance Analysis</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">📊</div>
+                        <h3>Total Energy Captured</h3>
+                        <div class="metric-comparison">
+                            <div class="metric-bar">
+                                <span class="bar-label">Adaptive</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill adaptive-bar" id="total-adaptive-bar"></div>
+                                </div>
+                                <span class="bar-value" id="total-adaptive-value">0 kWh</span>
+                            </div>
+                            <div class="metric-bar">
+                                <span class="bar-label">Baseline</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill baseline-bar" id="total-baseline-bar"></div>
+                                </div>
+                                <span class="bar-value" id="total-baseline-value">0 kWh</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">⚡</div>
+                        <h3>Average Power Output</h3>
+                        <div class="metric-comparison">
+                            <div class="metric-bar">
+                                <span class="bar-label">Adaptive</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill adaptive-bar" id="avg-adaptive-bar"></div>
+                                </div>
+                                <span class="bar-value" id="avg-adaptive-value">0 kW</span>
+                            </div>
+                            <div class="metric-bar">
+                                <span class="bar-label">Baseline</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill baseline-bar" id="avg-baseline-bar"></div>
+                                </div>
+                                <span class="bar-value" id="avg-baseline-value">0 kW</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card highlight">
+                        <div class="metric-icon">🎯</div>
+                        <h3>Performance Improvement</h3>
+                        <div class="improvement-display">
+                            <div class="improvement-value" id="improvement-percentage">+0%</div>
+                            <p class="improvement-text">More efficient than baseline</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Real-time Chart -->
+                <div class="chart-container">
+                    <h3>Energy Output Over Time</h3>
+                    <canvas id="energy-chart" width="800" height="300"></canvas>
+                </div>
+            </section>
+
+            <!-- Problem Statement Section -->
+            <section class="problem-section">
+                <h2>The Problem</h2>
+                <div class="problem-content">
+                    <div class="problem-card">
+                        <h3>Urban Wind Complexity</h3>
+                        <p>Conventional wind turbines operate on the fundamental assumption of consistent,
+                            unidirectional wind flow. These systems achieve optimal performance in open environments
+                            where wind patterns exhibit relative stability and predictability. However, urban
+                            environments present drastically different conditions characterized by turbulent,
+                            multidirectional airflow resulting from building interference, thermal updrafts, and complex
+                            aerodynamic interactions. Traditional large-scale turbines with fixed orientations cannot
+                            adapt to these rapidly changing conditions, resulting in substantial energy losses and
+                            suboptimal performance. The rigid architecture of conventional systems creates a fundamental
+                            mismatch between turbine capabilities and urban wind characteristics.</p>
+                    </div>
+
+                    <div class="problem-card">
+                        <h3>Integration Constraints</h3>
+                        <p>Building-integrated wind energy systems face additional constraints beyond wind variability.
+                            Urban installations must accommodate spatial limitations, aesthetic considerations, and
+                            structural load requirements that prohibit large-scale turbine deployment. Single large
+                            turbines demand significant mounting infrastructure and create concentrated mechanical
+                            stress on building facades. Furthermore, fixed-orientation systems cannot respond to the
+                            channeling effects and wind shear phenomena common in urban canyons, where wind direction
+                            and vertical components change within minutes or even seconds. These limitations have
+                            historically rendered building-integrated wind energy economically unviable despite the
+                            substantial energy potential present in urban airflow.</p>
+                    </div>
+
+                    <div class="problem-card">
+                        <h3>The Core Challenge</h3>
+                        <p>The core challenge lies in developing a wind energy system that adapts to chaotic urban wind
+                            patterns while meeting the practical constraints of building integration. Such a system
+                            requires distributed sensing and response capabilities, the ability to capture energy from
+                            both horizontal and vertical wind components, and structural configurations compatible with
+                            facade mounting. Additionally, the system must demonstrate superior energy capture compared
+                            to conventional approaches to justify the complexity of distributed control architecture.
+                            These requirements necessitate a paradigm shift from centralized, static turbine design to
+                            distributed, adaptive systems capable of real-time optimization in unpredictable
+                            environments.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Founders Section -->
+            <section class="founders-section">
+                <h2>The Founders</h2>
+                <div class="founders-grid">
+                    <div class="founder-card">
+                        <div class="founder-icon">👤</div>
+                        <h3>Nihal Dooddagowdru</h3>
+                        <p class="founder-role">Co-Founder</p>
+                    </div>
+
+                    <div class="founder-card">
+                        <div class="founder-icon">👤</div>
+                        <h3>An Nguyen</h3>
+                        <p class="founder-role">Co-Founder</p>
+                    </div>
+
+                    <div class="founder-card">
+                        <div class="founder-icon">👤</div>
+                        <h3>Sid Gupta</h3>
+                        <p class="founder-role">Co-Founder</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Info Section -->
+            <section class="info-section">
+                <h2>How It Works</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-number">1</div>
+                        <h3>Honeycomb Structure</h3>
+                        <p>6 turbines arranged in hexagonal pattern for optimal airflow and efficiency.</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-number">2</div>
+                        <h3>Urban Wind Detection</h3>
+                        <p>Sensors monitor horizontal wind, vertical updrafts, and turbulence from buildings.</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-number">3</div>
+                        <h3>Independent Tilting</h3>
+                        <p>Each turbine tilts up to ±30° to capture updrafts and maximize wind alignment.</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-number">4</div>
+                        <h3>Swarm Intelligence</h3>
+                        <p>Collective optimization with synergy bonus when turbines align efficiently.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Conrad Challenge 2026 | Swarm-Based Adaptive Wind Turbine System</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
